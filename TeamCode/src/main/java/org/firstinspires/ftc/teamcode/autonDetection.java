@@ -40,6 +40,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 
 import java.util.List;
+
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
  * determine which image is being presented to the robot.
@@ -50,11 +51,9 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "blueAutonRight", group = "Concept")
+@TeleOp(name = "autonDetection", group = "Concept")
+public class autonDetection extends LinearOpMode {
 
-public class blueAutonRight extends LinearOpMode {
-
-    private String label = "";
     /*
      * Specify the source for the Tensor Flow Model.
      * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
@@ -85,7 +84,7 @@ public class blueAutonRight extends LinearOpMode {
      * and paste it in to your code on the next line, between the double quotes.
      */
     private static final String VUFORIA_KEY =
-            "ARzmjp7/////AAABmd0h9zcHGEqrnG8hGLpGgOGFJh8GZLjNLJuHiuATJ+jS0YFgEkcTrADzFQMI5JqXF7O5RSMnopPM7mvBjWVeaSYuhDCHsduGTOULaG2ET3QEKnxo2z8fMF3vpcbFAXuQrZq7UqXgrocnkQqfronZLpU78zmsU/WqoA1OIIPzDfrxDWLdxZy3sxDCHFmKZHMcykOC2AKxqbQd8s9fjzdEZ5xeLx41F3iWW6rJ+9g9/Ggmzdd7IqQu9WPUCaacw3y1lSlZSgqdzuDgLAeRUThH9RtVEjT7uebk3u5C8ApwAqUjrnMKbeQ4ZDoc0cCFxafuhwFdt2chVLqVizgMNHp9FWjnwDyHn4IMEI3L2zeueEnX";
+            " -- YOUR NEW VUFORIA KEY GOES HERE  --- ";
 
     /**
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
@@ -129,33 +128,32 @@ public class blueAutonRight extends LinearOpMode {
 
         if (opModeIsActive()) {
             while (opModeIsActive()) {
-
                 if (tfod != null) {
-
                     // getUpdatedRecognitions() will return null if no new information is available since
                     // the last time that call was made.
                     List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                     if (updatedRecognitions != null) {
+                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
+
                         // step through the list of recognitions and display image position/size information for each one
                         // Note: "Image number" refers to the randomized image orientation/number
                         for (Recognition recognition : updatedRecognitions) {
-                            label = recognition.getLabel();
-                            telemetry.addData("object detection", label);
+                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
+                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
+                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
+                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
+
+                            telemetry.addData(""," ");
+                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
+                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
+                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
                         }
                         telemetry.update();
                     }
                 }
-
-
-                if (label.equals("bolt")) {
-                    //go to the right
-
-                }
             }
         }
     }
-
-
 
     /**
      * Initialize the Vuforia localization engine.
@@ -167,7 +165,7 @@ public class blueAutonRight extends LinearOpMode {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraName = hardwareMap.get(WebcamName.class, "frontCamera");
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "Webcam 1");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
