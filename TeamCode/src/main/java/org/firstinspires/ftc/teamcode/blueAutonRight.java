@@ -152,8 +152,10 @@ public class blueAutonRight extends LinearOpMode {
         }
 
         waitForStart();
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         if (opModeIsActive()) {
-
+            Pose2d startPose = new Pose2d(0, 0, 0);
+            drive.setPoseEstimate(startPose);
 
         }
     }
