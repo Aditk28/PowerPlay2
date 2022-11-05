@@ -73,7 +73,7 @@ public class TeleOp extends LinearOpMode {
             //Lift
             if (gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0 && liftMotor.getCurrentPosition() >= 0) {
                 liftMotor.setPower(-0.45);
-            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 2050) {
+            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4100) {
                 if (liftMotor.getCurrentPosition() >= 1500) {
                     liftMotor.setPower(0.3);
                 }
