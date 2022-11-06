@@ -33,6 +33,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
@@ -42,6 +43,10 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
 import java.util.List;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
@@ -56,6 +61,21 @@ import java.util.List;
 @TeleOp(name = "customModelBlueAutonRight", group = "Concept")
 
 public class customModelBlueAutonRight extends LinearOpMode {
+
+    public DcMotorEx liftMotor;
+    public DcMotorEx liftMotor2;
+    public static final int BOTTOM_LEVEL_POSITION = 2000;
+    public static final int MIDDLE_LEVEL_POSITION = 3000;
+    public static final int TOP_LEVEL_POSITION = 4000;
+    public static final int TOP_LEVEL = 3;
+    public static final int MIDDLE_LEVEL = 2;
+    public static final int BOTTOM_LEVEL = 1;
+    public Servo rightClaw;
+    public Servo leftClaw;
+    public int detectedLevel;
+
+
+
 
     private String label = "";
     /*
@@ -102,8 +122,53 @@ public class customModelBlueAutonRight extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
+    public void pickUp()  throws InterruptedException {
+        rightClaw.setPosition(.65);
+        leftClaw.setPosition(0);
+    }
+
+    public void drop() throws InterruptedException  {
+        rightClaw.setPosition(.37);
+        leftClaw.setPosition(.3);
+    }
+    public void dropBlock (int level)  throws InterruptedException {
+        Thread.sleep(100);
+        pickUp();
+        if(level == BOTTOM_LEVEL) {
+            liftMotor.setTargetPosition(BOTTOM_LEVEL_POSITION);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(0.9);
+            Thread.sleep(750);
+        }
+        else if(level == MIDDLE_LEVEL) {
+            liftMotor.setTargetPosition(MIDDLE_LEVEL_POSITION);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(0.9);
+            Thread.sleep(850);
+        }
+        else if(level == TOP_LEVEL) {
+            liftMotor.setTargetPosition(TOP_LEVEL_POSITION);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(0.9);
+            Thread.sleep(1500);
+        }
+        drop();
+        Thread.sleep(750);
+    }
+
+    public void liftReset() throws InterruptedException {
+        drop();
+        Thread.sleep(600);
+        liftMotor.setTargetPosition(0);
+        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        liftMotor.setPower(-0.60);
+        Thread.sleep(2000);
+    }
+
     @Override
-    public void runOpMode() {
+    public void runOpMode() throws InterruptedException  {
+        liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -163,7 +228,8 @@ public class customModelBlueAutonRight extends LinearOpMode {
         waitForStart();
         if (opModeIsActive()) {
             drive.followTrajectory(dropBlock);
-
+            dropBlock(MIDDLE_LEVEL);
+            liftReset();
         }
     }
 
