@@ -45,9 +45,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import java.util.List;
+
 /**
  * This 2022-2023 OpMode illustrates the basics of using the TensorFlow Object Detection API to
  * determine which image is being presented to the robot.
@@ -133,6 +135,11 @@ public class blueAutonRight extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
+
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(0, 0, 0);
+        drive.setPoseEstimate(startPose);
+
         while(!opModeIsActive()) {
             if (tfod != null) {
 
@@ -140,7 +147,7 @@ public class blueAutonRight extends LinearOpMode {
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
-                    // step through the list of recognitions and display image position/size information for each one
+                    // step through the list of recognitions
                     // Note: "Image number" refers to the randomized image orientation/number
                     for (Recognition recognition : updatedRecognitions) {
                         label = recognition.getLabel();
@@ -151,11 +158,18 @@ public class blueAutonRight extends LinearOpMode {
             }
         }
 
+
+        Trajectory dropBlock = drive.trajectoryBuilder(startPose)
+                .splineToLinearHeading(new Pose2d(36, -36, Math.toRadians(-45)), Math.toRadians(0))
+                .build();
+
+        Trajectory pickBlock = drive.trajectoryBuilder(dropBlock.end())
+                .lineToLinearHeading(new Pose2d(36, 36, Math.toRadians(0)))
+                .build();
+
         waitForStart();
-        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         if (opModeIsActive()) {
-            Pose2d startPose = new Pose2d(0, 0, 0);
-            drive.setPoseEstimate(startPose);
+            drive.followTrajectory(dropBlock);
 
         }
     }
