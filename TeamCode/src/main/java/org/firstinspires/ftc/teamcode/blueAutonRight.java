@@ -41,6 +41,7 @@ import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -142,7 +143,7 @@ public class blueAutonRight extends LinearOpMode {
             liftMotor.setTargetPosition(MIDDLE_LEVEL_POSITION);
             liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             liftMotor.setPower(0.9);
-            Thread.sleep(4000);
+            Thread.sleep(3000);
         }
         else if(level == TOP_LEVEL) {
             liftMotor.setTargetPosition(TOP_LEVEL_POSITION);
@@ -220,11 +221,13 @@ public class blueAutonRight extends LinearOpMode {
 
 
         Trajectory goToDropBlock = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(28, 0, Math.toRadians(-45)))
+                .lineToLinearHeading(new Pose2d(28, 0, Math.toRadians(-52)))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(goToDropBlock.end())
-                .forward(5)
+
+                .forward(8, SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         waitForStart();
@@ -232,6 +235,7 @@ public class blueAutonRight extends LinearOpMode {
             drive.followTrajectory(goToDropBlock);
             dropBlock(MIDDLE_LEVEL);
             drive.followTrajectory(dropBlock);
+            Thread.sleep(500);
             drop();
             liftReset();
         }
