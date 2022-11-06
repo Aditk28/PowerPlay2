@@ -150,7 +150,7 @@ public class blueAutonRight extends LinearOpMode {
             liftMotor.setPower(0.9);
             Thread.sleep(3000);
         }
-        drop();
+
         Thread.sleep(750);
     }
 
@@ -224,7 +224,7 @@ public class blueAutonRight extends LinearOpMode {
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(goToDropBlock.end())
-                .forward(3)
+                .forward(5)
                 .build();
 
         waitForStart();
