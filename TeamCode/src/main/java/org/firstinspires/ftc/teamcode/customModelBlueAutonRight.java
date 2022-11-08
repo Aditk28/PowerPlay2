@@ -76,7 +76,8 @@ public class customModelBlueAutonRight extends LinearOpMode {
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
     //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
-    private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/PowerPlay1.tflite";
+    //private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/PowerPlay1.tflite";
+    private static final String TFOD_MODEL_FILE  = "PowerPlay1.tflite";
 
 
     private static final String[] LABELS = {
@@ -148,7 +149,8 @@ public class customModelBlueAutonRight extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
 
-        while(!opModeIsActive()) {
+        waitForStart();
+        while(opModeIsActive()) {
             if (tfod != null) {
 
                 // getUpdatedRecognitions() will return null if no new information is available since
@@ -167,10 +169,6 @@ public class customModelBlueAutonRight extends LinearOpMode {
         }
 
 
-
-        waitForStart();
-        if (opModeIsActive()) {
-        }
     }
 
 
@@ -206,6 +204,6 @@ public class customModelBlueAutonRight extends LinearOpMode {
         // Use loadModelFromAsset() if the TF Model is built in as an asset by Android Studio
         // Use loadModelFromFile() if you have downloaded a custom team model to the Robot Controller's FLASH.
         //tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
-        tfod.loadModelFromFile(TFOD_MODEL_FILE, LABELS);
+        tfod.loadModelFromAsset(TFOD_MODEL_FILE, LABELS);
     }
 }

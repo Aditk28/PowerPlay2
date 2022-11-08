@@ -67,7 +67,7 @@ public class blueAutonRight extends LinearOpMode {
 
     public DcMotorEx liftMotor;
     public DcMotorEx liftMotor2;
-    public static final int BOTTOM_LEVEL_POSITION = 600;
+    public static final int BOTTOM_LEVEL_POSITION = 1600;
     public static final int MIDDLE_LEVEL_POSITION = 3000;
     public static final int TOP_LEVEL_POSITION = 4000;
     public static final int TOP_LEVEL = 3;
@@ -121,47 +121,31 @@ public class blueAutonRight extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
-    public void pickUp()  throws InterruptedException {
+    public void pickUp() throws InterruptedException {
         rightClaw.setPosition(.65);
         leftClaw.setPosition(0);
+        Thread.sleep(500);
     }
 
-    public void drop() throws InterruptedException  {
+    public void drop() throws InterruptedException {
         rightClaw.setPosition(.37);
         leftClaw.setPosition(.3);
+        Thread.sleep(500);
     }
-    public void dropBlock (int level)  throws InterruptedException {
+
+    public void changeLift (int height)  throws InterruptedException {
         Thread.sleep(100);
-        pickUp();
-        if(level == BOTTOM_LEVEL) {
-            liftMotor.setTargetPosition(BOTTOM_LEVEL_POSITION);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setPower(0.9);
-            Thread.sleep(1500);
-        }
-        else if(level == MIDDLE_LEVEL) {
-            liftMotor.setTargetPosition(MIDDLE_LEVEL_POSITION);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setPower(0.9);
-            Thread.sleep(2000);
-        }
-        else if(level == TOP_LEVEL) {
-            liftMotor.setTargetPosition(TOP_LEVEL_POSITION);
-            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            liftMotor.setPower(0.9);
-            Thread.sleep(3000);
-        }
 
-        Thread.sleep(750);
-    }
-
-    public void liftReset() throws InterruptedException {
-        drop();
-        Thread.sleep(600);
-        liftMotor.setTargetPosition(0);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        liftMotor.setPower(-0.60);
-        Thread.sleep(2000);
+        if (liftMotor.getCurrentPosition() < height) {
+            liftMotor.setTargetPosition(height);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(0.9);
+        }
+        else {
+            liftMotor.setTargetPosition(height);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(-0.7);
+        }
     }
 
     @Override
@@ -176,6 +160,8 @@ public class blueAutonRight extends LinearOpMode {
         liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        double strafeDistance = 1;
+
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -201,6 +187,33 @@ public class blueAutonRight extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
 
+
+
+
+        Trajectory dropBlock = drive.trajectoryBuilder(startPose)
+                .lineToLinearHeading(new Pose2d(35, -7, Math.toRadians(-52)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory goBack = drive.trajectoryBuilder(dropBlock.end())
+                .lineToLinearHeading(new Pose2d(28, 10, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory pickBlock = drive.trajectoryBuilder(goBack.end())
+                .splineToConstantHeading(new Vector2d(56, 29), Math.toRadians(0))
+                .build();
+
+        Trajectory dropBlock2 = drive.trajectoryBuilder(pickBlock.end())
+                .lineToLinearHeading(new Pose2d(49, 21, Math.toRadians(225)))
+                .build();
+
+        Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
+                .lineToLinearHeading(new Pose2d(34, 25, Math.toRadians(0)))
+                .build();
+
+
+
         while(!opModeIsActive()) {
             if (tfod != null) {
 
@@ -219,99 +232,31 @@ public class blueAutonRight extends LinearOpMode {
             }
         }
 
+        if (label.equals("2 Bulb")) { strafeDistance = 24; }
+        else if (label.equals("3 Panel")) { strafeDistance = 48; }
 
-        Trajectory goToDropBlock = drive.trajectoryBuilder(startPose)
-                .lineToLinearHeading(new Pose2d(28, 0, Math.toRadians(-52)))
+        Trajectory park = drive.trajectoryBuilder(reset.end())
+                .strafeRight(strafeDistance)
                 .build();
-
-        Trajectory goForward = drive.trajectoryBuilder(goToDropBlock.end())
-
-                .forward(8, SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        Trajectory goBack = drive.trajectoryBuilder(goForward.end())
-
-                .back(10, SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        Trajectory pickBlock = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(26, 30, Math.toRadians(0)))
-                .build();
-
-        Trajectory pickBlock2 = drive.trajectoryBuilder(pickBlock.end())
-                .lineToLinearHeading(new Pose2d(52, 25, Math.toRadians(90)))
-                .build();
-
-        Trajectory goForward2 = drive.trajectoryBuilder(pickBlock2.end())
-
-                .forward(6, SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        Trajectory dropBlock2 = drive.trajectoryBuilder(goForward2.end())
-                .lineToLinearHeading(new Pose2d(43, 20, Math.toRadians(225)))
-                .build();
-
-        Trajectory goForward3 = drive.trajectoryBuilder(dropBlock2.end())
-
-                .forward(4, SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        Trajectory goBack2 = drive.trajectoryBuilder(goForward3.end())
-
-                .back(7, SampleMecanumDrive.getVelocityConstraint(7, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
-                .build();
-
-        Trajectory pickBlock3 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(56, 35, Math.toRadians(90)))
-                .build();
-
-        Trajectory reset = drive.trajectoryBuilder(pickBlock3.end())
-                .lineToLinearHeading(new Pose2d(26, 26, Math.toRadians(0)))
-                .build();
-
-
 
         waitForStart();
         if (opModeIsActive()) {
-            drive.followTrajectory(goToDropBlock);
-            dropBlock(MIDDLE_LEVEL);
-            drive.followTrajectory(goForward);
-            Thread.sleep(500);
+
+
+            changeLift(MIDDLE_LEVEL_POSITION);
+            drive.followTrajectory(dropBlock);
             drop();
-            Thread.sleep(500);
+            changeLift(600);
             drive.followTrajectory(goBack);
-            liftReset();
             drive.followTrajectory(pickBlock);
-            drive.followTrajectory(pickBlock2);
-            dropBlock(BOTTOM_LEVEL);
-            drive.followTrajectory(goForward2);
-            Thread.sleep(500);
             pickUp();
-            Thread.sleep(500);
+            changeLift(BOTTOM_LEVEL_POSITION);
             drive.followTrajectory(dropBlock2);
-            dropBlock(MIDDLE_LEVEL);
-            drive.followTrajectory(goForward3);
-            Thread.sleep(500);
             drop();
-            drive.followTrajectory(goBack2);
-            liftReset();
-            drive.followTrajectory(pickBlock3);
-            dropBlock(BOTTOM_LEVEL);
-            drive.followTrajectory(goForward2);
-            pickUp();
-            drive.followTrajectory(dropBlock2);
-            dropBlock(MIDDLE_LEVEL);
-            drive.followTrajectory(goForward3);
-            drop();
-            drive.followTrajectory(goBack2);
-            liftReset();
+            changeLift(0);
             drive.followTrajectory(reset);
 
+            drive.followTrajectory(park);
             //if (label.equals())
         }
     }
