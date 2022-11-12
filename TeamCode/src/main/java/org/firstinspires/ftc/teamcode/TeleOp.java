@@ -73,7 +73,7 @@ public class TeleOp extends LinearOpMode {
             //Lift
             if (gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0 && liftMotor.getCurrentPosition() >= 0) {
                 liftMotor.setPower(-0.45);
-            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4100) {
+            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4500) {
                 if (liftMotor.getCurrentPosition() >= 1500) {
                     liftMotor.setPower(0.3);
                 }
@@ -98,7 +98,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad1.y && !turtleMode) {
                 turtleMode = true;
                 robotSpeed = TURTLE_SPEED;
-            } else if (gamepad1.y && turtleMode) {
+            } else if (gamepad1.a && turtleMode) {
                 turtleMode = false;
                 robotSpeed = NORMAL_SPEED;
             }
@@ -117,22 +117,22 @@ public class TeleOp extends LinearOpMode {
 
             // Pass in the rotated input + right stick value for rotation
             // Rotation is not part of the rotated input thus must be passed in separately
+//            drive.setWeightedDrivePower(
+//                    new Pose2d(
+//                            input.getX() * robotSpeed,
+//                            input.getY() * robotSpeed,
+//                            -gamepad1.right_stick_x * robotSpeed * rotationSpeed
+//                    )
+//            );
+
+
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            input.getX() * robotSpeed,
-                            input.getY() * robotSpeed,
+                            -gamepad1.left_stick_y * robotSpeed,
+                            -gamepad1.left_stick_x * robotSpeed,
                             -gamepad1.right_stick_x * robotSpeed * rotationSpeed
                     )
             );
-
-
-//            drive.setWeightedDrivePower(
-//                    new Pose2d(
-//                            -gamepad1.left_stick_y * robotSpeed,
-//                            -gamepad1.left_stick_x * robotSpeed,
-//                            -gamepad1.right_stick_x * robotSpeed * .75
-//                    )
-//            );
 
             // Update everything. Odometry. Etc.
             drive.update();

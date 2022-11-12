@@ -29,16 +29,23 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import java.util.List;
 
 /**
@@ -51,19 +58,32 @@ import java.util.List;
  * IMPORTANT: In order to use this OpMode, you need to obtain your own Vuforia license key as
  * is explained below.
  */
-@TeleOp(name = "customDetection", group = "Concept")
-public class customDetection extends LinearOpMode {
+@Autonomous(name = "autonLeft", group = "Autonomous")
 
+public class autonLeft extends LinearOpMode {
+
+    public DcMotorEx liftMotor;
+    public DcMotorEx liftMotor2;
+    public static final int BOTTOM_LEVEL_POSITION = 1800;
+    public static final int MIDDLE_LEVEL_POSITION = 3200;
+    public static final int TOP_LEVEL_POSITION = 4000;
+    public static final int TOP_LEVEL = 3;
+    public static final int MIDDLE_LEVEL = 2;
+    public static final int BOTTOM_LEVEL = 1;
+    public Servo rightClaw;
+    public Servo leftClaw;
+    public int detectedLevel;
+
+    private String label = "";
     /*
      * Specify the source for the Tensor Flow Model.
-     * If the TensorFlowLite object model i `s included in the Robot Controller App as an "asset",
+     * If the TensorFlowLite object model is included in the Robot Controller App as an "asset",
      * the OpMode must to load it using loadModelFromAsset().  However, if a team generated model
      * has been downloaded to the Robot Controller's SD FLASH memory, it must to be loaded using loadModelFromFile()
      * Here we assume it's an Asset.    Also see method initTfod() below .
      */
-    //private static final String TFOD_MODEL_ASSET = "PowerPlay2.tflite";
+    //private static final String TFOD_MODEL_ASSET = "PowerPlay.tflite";
     private static final String TFOD_MODEL_FILE  = "/sdcard/FIRST/tflitemodels/PowerPlay3.tflite";
-
 
     private static final String[] LABELS = {
             "Checker",
@@ -98,13 +118,47 @@ public class customDetection extends LinearOpMode {
      */
     private TFObjectDetector tfod;
 
+    public void pickUp() throws InterruptedException {
+        rightClaw.setPosition(.65);
+        leftClaw.setPosition(0);
+        Thread.sleep(500);
+    }
+
+    public void drop() throws InterruptedException {
+        rightClaw.setPosition(.37);
+        leftClaw.setPosition(.3);
+        Thread.sleep(500);
+    }
+
+    public void changeLift (int height)  throws InterruptedException {
+        Thread.sleep(100);
+
+        if (liftMotor.getCurrentPosition() < height) {
+            liftMotor.setTargetPosition(height);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(0.9);
+        }
+        else {
+            liftMotor.setTargetPosition(height);
+            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            liftMotor.setPower(-0.7);
+        }
+    }
 
     @Override
-    public void runOpMode() throws InterruptedException{
+    public void runOpMode() throws InterruptedException {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
         initTfod();
+        liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+        rightClaw = hardwareMap.get(Servo.class, "rightClaw");
+        leftClaw = hardwareMap.get(Servo.class, "leftClaw");
+        double strafeDistance = 1;
+
 
         /**
          * Activate TensorFlow Object Detection before we wait for the start command.
@@ -126,6 +180,54 @@ public class customDetection extends LinearOpMode {
         telemetry.addData(">", "Press Play to start op mode");
         telemetry.update();
 
+        SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
+        Pose2d startPose = new Pose2d(0, 0, 0);
+        drive.setPoseEstimate(startPose);
+
+
+
+
+        Trajectory strafeRight = drive.trajectoryBuilder(startPose)
+                .lineToConstantHeading(new Vector2d(10, -22))
+                .build();
+
+        Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
+                .lineToLinearHeading(new Pose2d(47.5, -14.8, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory strafeRight2 = drive.trajectoryBuilder(dropBlock.end())
+                .strafeRight(12)
+                .build();
+
+        Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
+                .lineToLinearHeading(new Pose2d(63, 35, Math.toRadians(90)))
+                .build();
+
+        Trajectory goBack = drive.trajectoryBuilder(pickBlock.end())
+                .back(20, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
+                .lineToLinearHeading(new Pose2d(58, 19.5, Math.toRadians(180)))
+                .build();
+
+        Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
+                .back(5, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
+                .lineToLinearHeading(new Pose2d(63, 35, Math.toRadians(90)))
+                .build();
+
+        Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
+                .lineToLinearHeading(new Pose2d(63, 32, Math.toRadians(183)))
+                .build();
+
+
+
         while(!opModeIsActive()) {
             if (tfod != null) {
 
@@ -133,46 +235,59 @@ public class customDetection extends LinearOpMode {
                 // the last time that call was made.
                 List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
                 if (updatedRecognitions != null) {
-                    telemetry.addData("# Objects Detected", updatedRecognitions.size());
                     // step through the list of recognitions
                     // Note: "Image number" refers to the randomized image orientation/number
                     for (Recognition recognition : updatedRecognitions) {
-                        telemetry.addData("object detection", recognition.getLabel());
+                        label = recognition.getLabel();
+                        telemetry.addData("object detection", label);
                     }
                     telemetry.update();
                 }
             }
         }
 
+        if (label.equals("Donut")) { strafeDistance = 24; }
+        else if (label.equals("Melon")) { strafeDistance = 48; }
+
+        Trajectory park = drive.trajectoryBuilder(reset.end())
+                .strafeLeft(strafeDistance)
+                .build();
+
         waitForStart();
         if (opModeIsActive()) {
-            while (opModeIsActive()) {
-                if (tfod != null) {
-                    // getUpdatedRecognitions() will return null if no new information is available since
-                    // the last time that call was made.
-                    List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
-                    if (updatedRecognitions != null) {
-                        telemetry.addData("# Objects Detected", updatedRecognitions.size());
 
-                        // step through the list of recognitions and display image position/size information for each one
-                        // Note: "Image number" refers to the randomized image orientation/number
-                        for (Recognition recognition : updatedRecognitions) {
-                            double col = (recognition.getLeft() + recognition.getRight()) / 2 ;
-                            double row = (recognition.getTop()  + recognition.getBottom()) / 2 ;
-                            double width  = Math.abs(recognition.getRight() - recognition.getLeft()) ;
-                            double height = Math.abs(recognition.getTop()  - recognition.getBottom()) ;
-
-                            telemetry.addData(""," ");
-                            telemetry.addData("Image", "%s (%.0f %% Conf.)", recognition.getLabel(), recognition.getConfidence() * 100 );
-                            telemetry.addData("- Position (Row/Col)","%.0f / %.0f", row, col);
-                            telemetry.addData("- Size (Width/Height)","%.0f / %.0f", width, height);
-                        }
-                        telemetry.update();
-                    }
-                }
-            }
+            drive.followTrajectory(strafeRight);
+            changeLift(MIDDLE_LEVEL_POSITION);
+            drive.followTrajectory(dropBlock);
+            drop();
+            changeLift(650);
+            drive.followTrajectory(strafeRight2);
+            drive.followTrajectory(pickBlock);
+            Thread.sleep(500);
+            pickUp();
+            changeLift(BOTTOM_LEVEL_POSITION);
+            Thread.sleep(600);
+            drive.followTrajectory(goBack);
+            drive.followTrajectory(dropBlock2);
+            drop();
+            changeLift(650);
+            drive.followTrajectory(goBack2);
+            drive.followTrajectory(pickBlock2);
+            Thread.sleep(500);
+            pickUp();
+            changeLift(BOTTOM_LEVEL_POSITION);
+            Thread.sleep(600);
+            drive.followTrajectory(goBack);
+            drive.followTrajectory(dropBlock2);
+            drop();
+            changeLift(0);
+            drive.followTrajectory(reset);
+            drive.followTrajectory(park);
+            //if (label.equals())
         }
     }
+
+
 
     /**
      * Initialize the Vuforia localization engine.
@@ -197,7 +312,7 @@ public class customDetection extends LinearOpMode {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
             "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
-        tfodParameters.minResultConfidence = 0.65f;
+        tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;
         tfodParameters.inputSize = 300;
         tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
