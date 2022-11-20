@@ -30,6 +30,7 @@ public class TeleOp extends LinearOpMode {
     public double pickPosition = .65;
     public double dropPosition = .37;
     public double rotationSpeed = .75;
+    public boolean fieldOriented = false;
 
 
     @Override
@@ -103,6 +104,14 @@ public class TeleOp extends LinearOpMode {
                 robotSpeed = NORMAL_SPEED;
             }
 
+            //fieldOriented toggle
+            if (gamepad1.a && !fieldOriented) {
+                drive.setPoseEstimate(new Pose2d(0,0,0));
+                fieldOriented = true;
+            } else if (gamepad1.x && fieldOriented) {
+                fieldOriented = false;
+            }
+
 
             //movement
             // Read pose
@@ -117,22 +126,25 @@ public class TeleOp extends LinearOpMode {
 
             // Pass in the rotated input + right stick value for rotation
             // Rotation is not part of the rotated input thus must be passed in separately
-//            drive.setWeightedDrivePower(
-//                    new Pose2d(
-//                            input.getX() * robotSpeed,
-//                            input.getY() * robotSpeed,
-//                            -gamepad1.right_stick_x * robotSpeed * rotationSpeed
-//                    )
-//            );
+            if (fieldOriented) {
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                input.getX() * robotSpeed,
+                                input.getY() * robotSpeed,
+                                -gamepad1.right_stick_x * robotSpeed * rotationSpeed
+                        )
+                );
+            }
 
-
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y * robotSpeed,
-                            -gamepad1.left_stick_x * robotSpeed,
-                            -gamepad1.right_stick_x * robotSpeed * rotationSpeed
-                    )
-            );
+            else {
+                drive.setWeightedDrivePower(
+                        new Pose2d(
+                                -gamepad1.left_stick_y * robotSpeed,
+                                -gamepad1.left_stick_x * robotSpeed,
+                                -gamepad1.right_stick_x * robotSpeed * rotationSpeed
+                        )
+                );
+            }
 
             // Update everything. Odometry. Etc.
             drive.update();
@@ -140,11 +152,10 @@ public class TeleOp extends LinearOpMode {
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("DRIVE", "------------------------------------");
-            telemetry.addData("Motor Power ", drive.getWheelVelocities());
             telemetry.addData("DriveMode: ", (turtleMode) ? ("turtleMode") : ("Normal"));
-            telemetry.addData("Normal Speed: ", robotSpeed);
             telemetry.addData("OTHER", "------------------------------------");
             telemetry.addData("LiftMotor Position: ", liftMotor.getCurrentPosition());
+            telemetry.addData("DriveType: ", (fieldOriented) ? ("Field-Oriented Drive") : ("Robot-Oriented"));
 
         }
     }
