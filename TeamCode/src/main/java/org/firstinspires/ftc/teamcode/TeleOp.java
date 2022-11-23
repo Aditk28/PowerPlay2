@@ -50,7 +50,7 @@ public class TeleOp extends LinearOpMode {
         rightClaw = hardwareMap.get(Servo.class, "rightClaw");
         leftClaw = hardwareMap.get(Servo.class, "leftClaw");
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
-        liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor");
+        liftMotor2 = hardwareMap.get(DcMotorEx.class, "liftMotor2");
         liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
         liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
@@ -74,17 +74,23 @@ public class TeleOp extends LinearOpMode {
             //Lift
             if (gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0 && liftMotor.getCurrentPosition() >= 0) {
                 liftMotor.setPower(-0.45);
-            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4500) {
+                liftMotor2.setPower(0.45);
+            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4200) {
                 if (liftMotor.getCurrentPosition() >= 1500) {
                     liftMotor.setPower(0.3);
+                    liftMotor2.setPower(-0.3);
                 }
                 liftMotor.setPower(0.85);
+                liftMotor2.setPower(-0.85);
             } else {
                 liftMotor.setPower(0.0);
+                liftMotor2.setPower(0.0);
                 if ((gamepad2.left_trigger == 0 && gamepad1.left_trigger == 0) && (!gamepad1.b && !gamepad2.b) && liftMotor.getCurrentPosition() >= 1000) {
                     liftMotor.setPower(0.01);
+                    liftMotor2.setPower(-0.01);
                 } else {
                     liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                    liftMotor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
                 }
             }
 
@@ -93,6 +99,7 @@ public class TeleOp extends LinearOpMode {
                 rightClaw.setPosition(dropPosition);
                 leftClaw.setPosition(dropPosition);
                 liftMotor.setPower(-0.50);
+                liftMotor.setPower(0.50);
             }
 
             //turtleMode
