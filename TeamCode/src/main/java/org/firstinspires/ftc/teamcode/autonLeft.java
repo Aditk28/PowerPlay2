@@ -188,20 +188,25 @@ public class autonLeft extends LinearOpMode {
 
 
         Trajectory strafeRight = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(10, -25))
+                .lineToConstantHeading(new Vector2d(10, -24))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(49.1, -15, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(48, -18, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
-        Trajectory strafeRight2 = drive.trajectoryBuilder(dropBlock.end())
+        Trajectory goBack1 = drive.trajectoryBuilder(dropBlock.end())
+                .back(5, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory strafeRight2 = drive.trajectoryBuilder(goBack1.end())
                 .strafeRight(12)
                 .build();
 
         Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
-                .lineToLinearHeading(new Pose2d(64.3, 34, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(63.5, 32.6, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -211,20 +216,20 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(58.7, 22, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(58, 15, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
-                .back(5, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .back(6, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(64.3, 34, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(63.5, 32.6, Math.toRadians(90)))
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(63, 32, Math.toRadians(182)))
+                .lineToLinearHeading(new Pose2d(63, 28, Math.toRadians(184)))
                 .build();
 
 
@@ -256,12 +261,12 @@ public class autonLeft extends LinearOpMode {
 
         waitForStart();
         if (opModeIsActive()) {
-
+            pickUp();
             drive.followTrajectory(strafeRight);
             changeLift(MIDDLE_LEVEL_POSITION);
             drive.followTrajectory(dropBlock);
             drop();
-
+            drive.followTrajectory(goBack1);
             drive.followTrajectory(strafeRight2);
             changeLift(650);
             drive.followTrajectory(pickBlock);
@@ -272,7 +277,7 @@ public class autonLeft extends LinearOpMode {
             drive.followTrajectory(goBack);
             drive.followTrajectory(dropBlock2);
             drop();
-            changeLift(650);
+            changeLift(550);
             drive.followTrajectory(goBack2);
             drive.followTrajectory(pickBlock2);
             Thread.sleep(460);
