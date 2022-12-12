@@ -29,23 +29,23 @@
 
 package org.firstinspires.ftc.teamcode;
 
-import com.acmerobotics.roadrunner.geometry.Pose2d;
-import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.acmerobotics.roadrunner.trajectory.Trajectory;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
-import org.firstinspires.ftc.teamcode.drive.DriveConstants;
-import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
+import com.acmerobotics.roadrunner.geometry.Pose2d;
+import com.acmerobotics.roadrunner.geometry.Vector2d;
 
+import org.firstinspires.ftc.teamcode.drive.DriveConstants;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.roadrunner.trajectory.Trajectory;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import java.util.List;
 
 /**
@@ -65,7 +65,7 @@ public class autonRight extends LinearOpMode {
     public DcMotorEx liftMotor;
     public DcMotorEx liftMotor2;
     public static final int BOTTOM_LEVEL_POSITION = 1800;
-    public static final int MIDDLE_LEVEL_POSITION = 3250;
+    public static final int MIDDLE_LEVEL_POSITION = 3200;
     public static final int TOP_LEVEL_POSITION = 4000;
     public static final int TOP_LEVEL = 3;
     public static final int MIDDLE_LEVEL = 2;
@@ -184,43 +184,52 @@ public class autonRight extends LinearOpMode {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive.setPoseEstimate(startPose);
 
+
+
+
         Trajectory strafeRight = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(5, 22))
+                .lineToConstantHeading(new Vector2d(10, 24))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(34.5, 18.7, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(40.1, 17.5, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
-        Trajectory strafeRight2 = drive.trajectoryBuilder(dropBlock.end())
-                .lineToConstantHeading(new Vector2d(45.5, 21))
+        Trajectory goBack1 = drive.trajectoryBuilder(dropBlock.end())
+                .back(5, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .build();
+
+        Trajectory strafeRight2 = drive.trajectoryBuilder(goBack1.end())
+                .strafeLeft(12)
                 .build();
 
         Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
-                .lineToLinearHeading(new Pose2d(45.5, -25.9, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(54, -32, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory goBack = drive.trajectoryBuilder(pickBlock.end())
-                .back(23, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .back(20, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(42, -9.5, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(51, -15.75, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
-                .back(4, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .back(6, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(45, -25, Math.toRadians(-90)))
+                .lineToLinearHeading(new Pose2d(54.3, -32, Math.toRadians(-90)))
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(48, -25, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(56, -28, Math.toRadians(176)))
                 .build();
 
 
@@ -244,7 +253,7 @@ public class autonRight extends LinearOpMode {
         }
 
         if (label.equals("Donut")) { strafeDistance = 24; }
-        else if (label.equals("Checker")) { strafeDistance = 48; }
+        else if (label.equals("Melon")) { strafeDistance = 48; }
 
         Trajectory park = drive.trajectoryBuilder(reset.end())
                 .strafeRight(strafeDistance)
@@ -252,13 +261,14 @@ public class autonRight extends LinearOpMode {
 
         waitForStart();
         if (opModeIsActive()) {
-
+            pickUp();
             drive.followTrajectory(strafeRight);
             changeLift(MIDDLE_LEVEL_POSITION);
             drive.followTrajectory(dropBlock);
             drop();
-            changeLift(650);
+            drive.followTrajectory(goBack1);
             drive.followTrajectory(strafeRight2);
+            changeLift(650);
             drive.followTrajectory(pickBlock);
             Thread.sleep(500);
             pickUp();
@@ -267,10 +277,10 @@ public class autonRight extends LinearOpMode {
             drive.followTrajectory(goBack);
             drive.followTrajectory(dropBlock2);
             drop();
-            changeLift(650);
+            changeLift(550);
             drive.followTrajectory(goBack2);
             drive.followTrajectory(pickBlock2);
-            Thread.sleep(500);
+            Thread.sleep(460);
             pickUp();
             changeLift(BOTTOM_LEVEL_POSITION);
             Thread.sleep(600);
@@ -307,7 +317,7 @@ public class autonRight extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;
