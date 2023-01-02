@@ -65,7 +65,7 @@ public class autonLeft extends LinearOpMode {
     public DcMotorEx liftMotor;
     public DcMotorEx liftMotor2;
     public static final int BOTTOM_LEVEL_POSITION = 1800;
-    public static final int MIDDLE_LEVEL_POSITION = 3200;
+    public static final int MIDDLE_LEVEL_POSITION = 3050;
     public static final int TOP_LEVEL_POSITION = 4000;
     public static final int TOP_LEVEL = 3;
     public static final int MIDDLE_LEVEL = 2;
@@ -188,16 +188,16 @@ public class autonLeft extends LinearOpMode {
 
 
         Trajectory strafeRight = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(10, -24))
+                .lineToConstantHeading(new Vector2d(10, -20))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(45.1, -17.25, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(44.85, -15.3, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory goBack1 = drive.trajectoryBuilder(dropBlock.end())
-                .back(5, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .back(3.5, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -206,7 +206,7 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
-                .lineToLinearHeading(new Pose2d(59, 32.5, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(59, 33.85, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -216,7 +216,7 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(56, 15.25, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(55.8, 16.35, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
@@ -225,11 +225,11 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(59, 32.5, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(59, 33.85, Math.toRadians(90)))
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(60, 28, Math.toRadians(184)))
+                .lineToLinearHeading(new Pose2d(58, 28, Math.toRadians(184)))
                 .build();
 
 

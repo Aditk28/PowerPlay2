@@ -72,7 +72,7 @@ public class TeleOp extends LinearOpMode {
             }
 
             //Lift
-            if (gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0 && liftMotor.getCurrentPosition() >= 0) {
+            if ((gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0) && liftMotor.getCurrentPosition() >= 0) {
                 liftMotor.setPower(-0.75);
                 liftMotor2.setPower(0.75);
             } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4000) {
@@ -102,7 +102,7 @@ public class TeleOp extends LinearOpMode {
             if (gamepad1.y && !turtleMode) {
                 turtleMode = true;
                 robotSpeed = TURTLE_SPEED;
-            } else if (gamepad1.a && turtleMode) {
+            } else if (gamepad1.x && turtleMode) {
                 turtleMode = false;
                 robotSpeed = NORMAL_SPEED;
             }
