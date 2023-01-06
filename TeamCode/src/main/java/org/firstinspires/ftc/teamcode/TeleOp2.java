@@ -10,8 +10,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp", group="Linear Opmode")
-public class TeleOp extends LinearOpMode {
+@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="TeleOp2", group="Linear Opmode")
+public class TeleOp2 extends LinearOpMode {
 
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
@@ -72,16 +72,16 @@ public class TeleOp extends LinearOpMode {
             }
 
             //Lift
-            if ((gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0) && liftMotor.getCurrentPosition() >= 0) {
+            if ((gamepad2.left_trigger != 0) && liftMotor.getCurrentPosition() >= 0) {
                 liftMotor.setPower(-0.75);
                 liftMotor2.setPower(0.75);
-            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4000) {
+            } else if (gamepad2.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4000) {
                 liftMotor.setPower(0.85);
                 liftMotor2.setPower(-0.85);
             } else {
                 liftMotor.setPower(0.0);
                 liftMotor2.setPower(0.0);
-                if ((gamepad2.left_trigger == 0 && gamepad1.left_trigger == 0) && (!gamepad1.b && !gamepad2.b) && liftMotor.getCurrentPosition() >= 1000) {
+                if ((gamepad2.left_trigger == 0) && (!gamepad1.b && !gamepad2.b) && liftMotor.getCurrentPosition() >= 1000) {
                     liftMotor.setPower(0.01);
                     liftMotor2.setPower(-0.01);
                 } else {
@@ -124,11 +124,21 @@ public class TeleOp extends LinearOpMode {
 
             // Create a vector from the gamepad x/y inputs
             // Then, rotate that vector by the inverse of that heading
-            Vector2d input = new Vector2d(
-                    -gamepad1.left_stick_y,
-                    -gamepad1.left_stick_x
-            ).rotated(-poseEstimate.getHeading());
+            Vector2d input;
+            if (gamepad1.left_trigger != 0 || gamepad1.right_trigger != 0) {
+                input = new Vector2d(
+                        -gamepad1.left_trigger,
+                        -gamepad1.right_trigger
+                ).rotated(-poseEstimate.getHeading());
 
+            }
+
+            else {
+                input = new Vector2d(
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x
+                ).rotated(-poseEstimate.getHeading());
+            }
             // Pass in the rotated input + right stick value for rotation
             // Rotation is not part of the rotated input thus must be passed in separately
             if (fieldOriented) {
