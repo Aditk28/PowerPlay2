@@ -192,7 +192,7 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(44.85, -15.8, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(45.55, -15.8, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -216,7 +216,7 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(55.8, 16.6, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(54.9, 17.1, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
@@ -229,7 +229,7 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(58, 28, Math.toRadians(184)))
+                .lineToLinearHeading(new Pose2d(58, 29, Math.toRadians(184)))
                 .build();
 
 

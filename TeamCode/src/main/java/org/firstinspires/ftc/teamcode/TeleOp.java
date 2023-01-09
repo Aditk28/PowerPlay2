@@ -73,11 +73,11 @@ public class TeleOp extends LinearOpMode {
 
             //Lift
             if ((gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0) && liftMotor.getCurrentPosition() >= 0) {
-                liftMotor.setPower(-0.75);
-                liftMotor2.setPower(0.75);
+                liftMotor.setPower(-0.9);
+                liftMotor2.setPower(0.9);
             } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4000) {
-                liftMotor.setPower(0.85);
-                liftMotor2.setPower(-0.85);
+                liftMotor.setPower(0.9);
+                liftMotor2.setPower(-0.9);
             } else {
                 liftMotor.setPower(0.0);
                 liftMotor2.setPower(0.0);
@@ -91,7 +91,7 @@ public class TeleOp extends LinearOpMode {
             }
 
 //            //lift + bucket reset
-            if ((gamepad2.b || gamepad1.b) && liftMotor.getCurrentPosition() > 0) {
+            if ((gamepad2.b || gamepad1.b)) {
                 rightClaw.setPosition(dropPosition);
                 leftClaw.setPosition(dropPosition);
                 liftMotor.setPower(-0.50);
