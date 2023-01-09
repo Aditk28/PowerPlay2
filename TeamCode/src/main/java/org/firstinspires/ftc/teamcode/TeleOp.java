@@ -107,8 +107,6 @@ public class TeleOp extends LinearOpMode {
                 robotSpeed = NORMAL_SPEED;
             }
 
-
-
             //fieldOriented toggle
             if (gamepad1.a && !fieldOriented) {
                 drive.setPoseEstimate(new Pose2d(0,0,0));
