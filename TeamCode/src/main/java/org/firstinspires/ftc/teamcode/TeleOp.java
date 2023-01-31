@@ -62,6 +62,7 @@ public class TeleOp extends LinearOpMode {
 
 
         while (opModeIsActive()) {
+
             //clawMotor
             if (gamepad2.right_bumper || gamepad1.right_bumper) {
                 rightClaw.setPosition(pickPosition);

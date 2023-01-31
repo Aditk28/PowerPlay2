@@ -65,7 +65,7 @@ public class autonLeft extends LinearOpMode {
     public DcMotorEx liftMotor;
     public DcMotorEx liftMotor2;
     public static final int BOTTOM_LEVEL_POSITION = 1800;
-    public static final int MIDDLE_LEVEL_POSITION = 3050;
+    public static final int MIDDLE_LEVEL_POSITION = 2950;
     public static final int TOP_LEVEL_POSITION = 4000;
     public static final int TOP_LEVEL = 3;
     public static final int MIDDLE_LEVEL = 2;
@@ -188,11 +188,11 @@ public class autonLeft extends LinearOpMode {
 
 
         Trajectory strafeRight = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(10, -20))
+                .lineToConstantHeading(new Vector2d(10, -23))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(45.55, -15.8, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(46.5, -16.6, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -202,34 +202,35 @@ public class autonLeft extends LinearOpMode {
                 .build();
 
         Trajectory strafeRight2 = drive.trajectoryBuilder(goBack1.end())
-                .strafeRight(12)
+                .strafeRight(14)
                 .build();
 
         Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
-                .lineToLinearHeading(new Pose2d(59, 33.85, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(62, 32.15, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory goBack = drive.trajectoryBuilder(pickBlock.end())
-                .back(20, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
-                SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
+                .back(25, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(54.9, 17.1, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(58.1, 16, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
-                .back(6, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .back(9, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(59, 33.85, Math.toRadians(90)))
+                .lineToLinearHeading(new Pose2d(62, 32.15, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                        SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(58, 29, Math.toRadians(184)))
+                .lineToLinearHeading(new Pose2d(64, 27, Math.toRadians(184)))
                 .build();
 
 
@@ -317,7 +318,7 @@ public class autonLeft extends LinearOpMode {
      */
     private void initTfod() {
         int tfodMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-            "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+                "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
         tfodParameters.minResultConfidence = 0.60f;
         tfodParameters.isModelTensorFlow2 = true;

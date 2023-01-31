@@ -65,7 +65,7 @@ public class autonRight extends LinearOpMode {
     public DcMotorEx liftMotor;
     public DcMotorEx liftMotor2;
     public static final int BOTTOM_LEVEL_POSITION = 1800;
-    public static final int MIDDLE_LEVEL_POSITION = 3100;
+    public static final int MIDDLE_LEVEL_POSITION = 3000;
     public static final int TOP_LEVEL_POSITION = 4000;
     public static final int TOP_LEVEL = 3;
     public static final int MIDDLE_LEVEL = 2;
@@ -188,11 +188,11 @@ public class autonRight extends LinearOpMode {
 
 
         Trajectory strafeRight = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(10, 21))
+                .lineToConstantHeading(new Vector2d(10, 19))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(39.25, 16.5, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(39.5, 14.8, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -202,35 +202,35 @@ public class autonRight extends LinearOpMode {
                 .build();
 
         Trajectory strafeRight2 = drive.trajectoryBuilder(goBack1.end())
-                .strafeLeft(12)
+                .strafeLeft(14)
                 .build();
 
         Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
-                .lineToLinearHeading(new Pose2d(54, -30.5, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(52, -32.6, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory goBack = drive.trajectoryBuilder(pickBlock.end())
-                .back(20, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .back(25, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(49.2, -13.9, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(49, -16, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
-                .back(6, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .back(8, SampleMecanumDrive.getVelocityConstraint(20, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(53, -30.5, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(53, -32.6, Math.toRadians(-90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(56, -28, Math.toRadians(184)))
+                .lineToLinearHeading(new Pose2d(56, -29, Math.toRadians(184)))
                 .build();
 
 
