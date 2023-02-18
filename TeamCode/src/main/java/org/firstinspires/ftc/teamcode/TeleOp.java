@@ -93,10 +93,8 @@ public class TeleOp extends LinearOpMode {
 
 //            //lift + bucket reset
             if ((gamepad2.b || gamepad1.b)) {
-                rightClaw.setPosition(dropPosition);
-                leftClaw.setPosition(dropPosition);
-                liftMotor.setPower(-0.50);
-                liftMotor.setPower(0.50);
+                liftMotor.setPower(-0.90);
+                liftMotor2.setPower(0.90);
             }
 
             //turtleMode
@@ -116,7 +114,13 @@ public class TeleOp extends LinearOpMode {
                 fieldOriented = false;
             }
 
+            if (gamepad2.dpad_down) {
+                liftMotor2.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                liftMotor.setMode(DcMotorEx.RunMode.STOP_AND_RESET_ENCODER);
+                liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
+                liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+            }
             //movement
             // Read pose
             Pose2d poseEstimate = drive.getPoseEstimate();

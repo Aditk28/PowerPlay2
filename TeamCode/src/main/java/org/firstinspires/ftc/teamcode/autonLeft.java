@@ -288,9 +288,9 @@ public class autonLeft extends LinearOpMode {
             drive.followTrajectory(goBack);
             drive.followTrajectory(dropBlock2);
             drop();
-            changeLift(0);
             drive.followTrajectory(reset);
             drive.followTrajectory(park);
+            changeLift(0);
             //if (label.equals())
         }
     }
