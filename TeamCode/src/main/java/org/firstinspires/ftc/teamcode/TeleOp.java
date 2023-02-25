@@ -32,6 +32,7 @@ public class TeleOp extends LinearOpMode {
     public double rotationSpeed = .75;
     public boolean fieldOriented = false;
 
+    public int UPPER_BOUND = 3850;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -76,7 +77,7 @@ public class TeleOp extends LinearOpMode {
             if ((gamepad2.left_trigger != 0 || gamepad1.left_trigger != 0) && liftMotor.getCurrentPosition() >= 0) {
                 liftMotor.setPower(-0.9);
                 liftMotor2.setPower(0.9);
-            } else if (gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0 && liftMotor.getCurrentPosition() <= 4000) {
+            } else if ((gamepad2.right_trigger != 0 || gamepad1.right_trigger != 0) && liftMotor.getCurrentPosition() <= UPPER_BOUND) {
                 liftMotor.setPower(0.9);
                 liftMotor2.setPower(-0.9);
             } else {
@@ -120,6 +121,13 @@ public class TeleOp extends LinearOpMode {
                 liftMotor.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
                 liftMotor2.setMode(DcMotorEx.RunMode.RUN_USING_ENCODER);
 
+            }
+
+            if (gamepad2.dpad_right) {
+                UPPER_BOUND = 4500;
+            }
+            if (gamepad2.dpad_left) {
+                UPPER_BOUND = 3850;
             }
             //movement
             // Read pose

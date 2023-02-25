@@ -188,11 +188,11 @@ public class autonLeft2 extends LinearOpMode {
 
 
         Trajectory strafeRight = drive.trajectoryBuilder(startPose)
-                .lineToConstantHeading(new Vector2d(10, -23))
+                .lineToConstantHeading(new Vector2d(10, -21))
                 .build();
 
         Trajectory dropBlock = drive.trajectoryBuilder(strafeRight.end())
-                .lineToLinearHeading(new Pose2d(46, -16.4, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(45.5, -14.5, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(25, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -206,7 +206,7 @@ public class autonLeft2 extends LinearOpMode {
                 .build();
 
         Trajectory pickBlock = drive.trajectoryBuilder(strafeRight2.end())
-                .lineToLinearHeading(new Pose2d(61, 33.65, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(61, 35.65, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
@@ -216,7 +216,7 @@ public class autonLeft2 extends LinearOpMode {
                 .build();
 
         Trajectory dropBlock2 = drive.trajectoryBuilder(goBack.end())
-                .lineToLinearHeading(new Pose2d(56.6, 17, Math.toRadians(180)))
+                .lineToLinearHeading(new Pose2d(56.6, 18, Math.toRadians(180)))
                 .build();
 
         Trajectory goBack2 = drive.trajectoryBuilder(dropBlock2.end())
@@ -225,12 +225,12 @@ public class autonLeft2 extends LinearOpMode {
                 .build();
 
         Trajectory pickBlock2 = drive.trajectoryBuilder(goBack2.end())
-                .lineToLinearHeading(new Pose2d(61, 33.65, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
+                .lineToLinearHeading(new Pose2d(61, 35.65, Math.toRadians(90)), SampleMecanumDrive.getVelocityConstraint(30, DriveConstants.MAX_ANG_VEL, DriveConstants.TRACK_WIDTH),
                         SampleMecanumDrive.getAccelerationConstraint(DriveConstants.MAX_ACCEL))
                 .build();
 
         Trajectory reset = drive.trajectoryBuilder(dropBlock2.end())
-                .lineToLinearHeading(new Pose2d(58.5, 29, Math.toRadians(176)))
+                .lineToLinearHeading(new Pose2d(58.5, 30, Math.toRadians(177)))
                 .build();
 
 
@@ -254,7 +254,7 @@ public class autonLeft2 extends LinearOpMode {
         }
 
         if (label.equals("Donut")) { strafeDistance = 24; }
-        else if (label.equals("Melon")) { strafeDistance = 48; }
+        else if (label.equals("Melon")) { strafeDistance = 46; }
 
         Trajectory park = drive.trajectoryBuilder(reset.end())
                 .strafeLeft(strafeDistance)
