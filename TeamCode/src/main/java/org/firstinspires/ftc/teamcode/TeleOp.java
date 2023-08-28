@@ -32,7 +32,7 @@ public class TeleOp extends LinearOpMode {
     public double rotationSpeed = .75;
     public boolean fieldOriented = false;
 
-    public int UPPER_BOUND = 3850;
+    public int UPPER_BOUND = 4000;
 
     @Override
     public void runOpMode() throws InterruptedException {
